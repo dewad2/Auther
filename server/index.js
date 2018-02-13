@@ -11,18 +11,18 @@ app.use(volleyball);
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
-//session middlewear
+//session middleware
 app.use(session({
   // this mandatory configuration ensures that session IDs are not predictable
   secret: 'SunnyB3aches', // or whatever you like
   // this option says if you haven't changed anything, don't resave. It is recommended and reduces session concurrency issues
   resave: false,
   // this option says if I am new but not modified still save
-  saveUninitialized: true 
+  saveUninitialized: true
 }));
 
-app.use(passport.initialize()); // middleware required to initialize Passport
- // hooks into the persistent sessions we are using
+app.use(passport.initialize()); // middleware required to initialize Passport     //PASSPORT MIDDLEWARE MUST BE AFTER SESSION MIDDLEWARE BECAUSE WORKS ON TOP
+ // hooks into the persistent sessions we are using                              //OF SESSION. DOES THE INTERACTING WITH IT FOR US (creating+ending the session with login and logout)
 
 passport.serializeUser(function (user, done) {
   /* Remember you want to go from a big object (user instance)
@@ -33,6 +33,7 @@ passport.serializeUser(function (user, done) {
 
   done(null,user.id)
 });
+
 passport.deserializeUser(function (id, done) {
   /* We want to go from a small item (userId)
      to a large object! The reverse of serialization
@@ -40,10 +41,11 @@ passport.deserializeUser(function (id, done) {
      Don't forget about `done`
      ------------ YOUR CODE HERE ------------
   */
-    User.findById(id).then(user=>{
-      
-      done(null,user)
-    }).catch(done)
+    User.findById(id)
+      .then(user=>{
+        done(null,user)
+      })
+      .catch(done)
 });
 
 app.use(passport.session());
@@ -51,14 +53,9 @@ app.use(passport.session());
 // place right after the session setup middleware
 app.use(function (req, res, next) {
   console.log('SESSION: ', req.session);
-
-  next();
-});
-app.use(function (req, res, next) {
   console.log('SESSION USER: ', req.user);
   next();
-}); //logging our user's credentials 
-
+});
 
 
 

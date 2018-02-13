@@ -55,13 +55,17 @@ class Login extends React.Component {
     );
   }
 
- 
+
 }
 
 /* -----------------    CONTAINER     ------------------ */
 
-const mapState = () => ({ message: 'Log in' });
-const mapDispatch=(dispatch)=>{
+const mapState = (state) => {
+
+};
+
+
+const mapDispatch=(dispatch)=>{             //only place have access to dispatch in this file
   return {
     login:(event)=>{
       event.preventDefault();

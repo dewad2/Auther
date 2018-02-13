@@ -1,15 +1,16 @@
 import axios from 'axios'
+
+//action
 const LOGIN_USER = 'LOGIN_USER'
 
-//define the action creater 
-
+//action creator
 export function loginUser(user){
     return {
         type:LOGIN_USER,
-        user: user
+        user,
     }
 }
-//thunk creater 
+//thunk creator
 
 export function login(credentials){
 
@@ -18,26 +19,26 @@ export function login(credentials){
         .then(res =>{
             console.log("res!!!!",res.data)
             res.data})
-        .then((user)=>{
+        .then(user => {
             console.log(user)
             dispatch(loginUser(user))
             }
-        ) 
+        )
         .catch(err => console.error(`Logging in: ${credentials.email} unsuccessful`, err));
-           
+
     }
 }
 
-  
 
-//reducer 
+
+//reducer
 
 export default function reducer(user = {}, action) {
 
     switch(action.type){
         case LOGIN_USER:
         return action.user
-    default: 
+    default:
         return user
     }
 }

@@ -1,12 +1,11 @@
 import React from 'react';
 import { connect } from 'react-redux';
-
+import { login } from '../redux/auth'
 /* -----------------    COMPONENT     ------------------ */
 
 class Login extends React.Component {
   constructor(props) {
     super(props);
-    this.onLoginSubmit = this.onLoginSubmit.bind(this);
   }
 
   render() {
@@ -14,7 +13,7 @@ class Login extends React.Component {
     return (
       <div className="signin-container">
         <div className="buffer local">
-          <form onSubmit={this.onLoginSubmit}>
+          <form onSubmit={this.props.login}>
             <div className="form-group">
               <label>email</label>
               <input
@@ -56,16 +55,23 @@ class Login extends React.Component {
     );
   }
 
-  onLoginSubmit(event) {
-    event.preventDefault();
-    const { message } = this.props;
-    console.log(`${message} isn't implemented yet`);
-  }
+ 
 }
 
 /* -----------------    CONTAINER     ------------------ */
 
 const mapState = () => ({ message: 'Log in' });
-const mapDispatch = null;
+const mapDispatch=(dispatch)=>{
+  return {
+    login:(event)=>{
+      event.preventDefault();
+      const credentials={
+        email:event.target.email.value,
+        password:event.target.password.value
+      }
+      dispatch(login(credentials))
+    }
+  }
+};
 
 export default connect(mapState, mapDispatch)(Login);

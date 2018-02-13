@@ -23921,9 +23921,13 @@ var _stories = __webpack_require__(8);
 
 var _stories2 = _interopRequireDefault(_stories);
 
+var _auth = __webpack_require__(160);
+
+var _auth2 = _interopRequireDefault(_auth);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-exports.default = (0, _redux.combineReducers)({ users: _users2.default, stories: _stories2.default });
+exports.default = (0, _redux.combineReducers)({ users: _users2.default, stories: _stories2.default, auth: _auth2.default });
 
 /***/ }),
 /* 105 */
@@ -27997,6 +28001,8 @@ var _react2 = _interopRequireDefault(_react);
 
 var _reactRedux = __webpack_require__(6);
 
+var _auth = __webpack_require__(160);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -28013,10 +28019,7 @@ var Login = function (_React$Component) {
   function Login(props) {
     _classCallCheck(this, Login);
 
-    var _this = _possibleConstructorReturn(this, (Login.__proto__ || Object.getPrototypeOf(Login)).call(this, props));
-
-    _this.onLoginSubmit = _this.onLoginSubmit.bind(_this);
-    return _this;
+    return _possibleConstructorReturn(this, (Login.__proto__ || Object.getPrototypeOf(Login)).call(this, props));
   }
 
   _createClass(Login, [{
@@ -28032,7 +28035,7 @@ var Login = function (_React$Component) {
           { className: 'buffer local' },
           _react2.default.createElement(
             'form',
-            { onSubmit: this.onLoginSubmit },
+            { onSubmit: this.props.login },
             _react2.default.createElement(
               'div',
               { className: 'form-group' },
@@ -28107,14 +28110,6 @@ var Login = function (_React$Component) {
         )
       );
     }
-  }, {
-    key: 'onLoginSubmit',
-    value: function onLoginSubmit(event) {
-      event.preventDefault();
-      var message = this.props.message;
-
-      console.log(message + ' isn\'t implemented yet');
-    }
   }]);
 
   return Login;
@@ -28125,7 +28120,18 @@ var Login = function (_React$Component) {
 var mapState = function mapState() {
   return { message: 'Log in' };
 };
-var mapDispatch = null;
+var mapDispatch = function mapDispatch(dispatch) {
+  return {
+    login: function login(event) {
+      event.preventDefault();
+      var credentials = {
+        email: event.target.email.value,
+        password: event.target.password.value
+      };
+      dispatch((0, _auth.login)(credentials));
+    }
+  };
+};
 
 exports.default = (0, _reactRedux.connect)(mapState, mapDispatch)(Login);
 
@@ -46523,6 +46529,68 @@ var Footer = function Footer() {
 };
 
 exports.default = Footer;
+
+/***/ }),
+/* 160 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.loginUser = loginUser;
+exports.login = login;
+exports.default = reducer;
+
+var _axios = __webpack_require__(47);
+
+var _axios2 = _interopRequireDefault(_axios);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var LOGIN_USER = 'LOGIN_USER';
+
+//define the action creater 
+
+function loginUser(user) {
+    return {
+        type: LOGIN_USER,
+        user: user
+    };
+}
+//thunk creater 
+
+function login(credentials) {
+
+    return function (dispatch) {
+        _axios2.default.put('/auth/local/login', credentials).then(function (res) {
+            console.log("res!!!!", res.data);
+            res.data;
+        }).then(function (user) {
+            console.log(user);
+            dispatch(loginUser(user));
+        }).catch(function (err) {
+            return console.error('Logging in: ' + credentials.email + ' unsuccessful', err);
+        });
+    };
+}
+
+//reducer 
+
+function reducer() {
+    var user = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+    var action = arguments[1];
+
+
+    switch (action.type) {
+        case LOGIN_USER:
+            return action.user;
+        default:
+            return user;
+    }
+}
 
 /***/ })
 /******/ ]);
